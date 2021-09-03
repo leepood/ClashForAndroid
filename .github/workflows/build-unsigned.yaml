@@ -45,3 +45,15 @@ jobs:
         uses: lukka/get-cmake@latest
       - name: Build
         run: ./gradlew --no-daemon app:assembleRelease
+      - name: Upload APKs to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./app/build/outputs/apk/release/*.apk
+          tag: release.${{ steps.date.outputs.date }}
+          overwrite: true
+          file_glob: true
+          body: |
+            Changelog since last release:
+            ```
+            ${{ fromJSON(steps.changelog.outputs.RELEASE_BODY) }}
